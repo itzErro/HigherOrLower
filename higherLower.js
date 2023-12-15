@@ -25,13 +25,6 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 let vars = {};
 let resultsTable = "";
 
-
-// COMMAND LINE CODE START
-if (process.argv.length != 3) {
-  process.stdout.write(`Error Starting\n`);
-  process.exit(0);
-}
-
 const portNumber = process.env.PORT;
 
 app.listen(portNumber);
