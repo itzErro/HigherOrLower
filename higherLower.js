@@ -32,7 +32,7 @@ if (process.argv.length != 3) {
   process.exit(0);
 }
 
-const portNumber = process.argv[2]?.trim() || process.env.PORT || 4000;
+const portNumber = process.env.PORT;
 
 app.listen(portNumber);
 console.log(`Web server started and running at http://localhost:${portNumber}`);
