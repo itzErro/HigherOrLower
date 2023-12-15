@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Higher or Lower</title>
+	<link rel="stylesheet" href="gameStyle.css" type="text/css">
+</head>
+
+<body>
+	<div class="navbar">
+		<%- include('header.ejs') %>
+	</div>
+	<br>
+	<div><strong>Which country has a higher population?</strong></div>
+	<div id="choiceResult" name="choiceResult"></div>
+	
+	<hr>
+	<div id="gameBox">
+		<div class="sub_gameBox" id="left_gameBox"> 
+			<h3 id="left_country_name"></h3> <br>
+			<img class="game_image" id="left_country_image">
+		</div>
+
+		<div class="sub_gameBox" id="right_gameBox"> 
+			<h3 id="right_country_name"></h3> <br>
+			<img class="game_image" id="right_country_image">
+			
+		</div>
+	</div> <br>
+
+	<a>Score:</a>
+	<a id="score">0</a> <br>
+	<a>Your High Score:</a>
+	<a id="highScore" name="highScore">0</a>
+	<input type="hidden" name="highScore_hidden" value="0">
+
+	<hr>
+
+
+	<script>
+		let score = 0;
+		let highScore;
+		let gameInProgress = false; // Update -control when exiting the page
+		const left_gameBox = {image: document.getElementById("left_country_image"),
+							  name: document.getElementById("left_country_name"),
+							  population: 0};
+		const right_gameBox = {image: document.getElementById("right_country_image"),
+								name: document.getElementById("right_country_name"),
+								population: 0};
+
+        const serverData = JSON.parse('<%- JSON.stringify(serverData) %>');
+		// let playerLoggedIn = serverData["playerLoggedIn"];
+		// console.log(serverData);
+
+		/* NEED THIS FOR API CALLS AND TO FETCH HIGH SCORE FOR CURRENT SESSION */
+		document.addEventListener('DOMContentLoaded', function() {
+			playerLoggedIn = false;
+			highScore = serverData["playerHighScore"];
+			document.getElementById("highScore").innerHTML = highScore;
+			initGame();
+		});
+
+
+		left_gameBox.image.addEventListener('click', function() {
+        //alert('Left Button clicked!');
+			if (checkCorrectness("left")){
+				updateGameBox();
+				updateScore(1);
+
+			} else {
+				// Game over
+
+				updateScore(0);
+				fetch('/game', { 
+						method: 'POST',
+						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+						body: new URLSearchParams({ highScore: highScore })})
+				.then(res => res.json())
+				.then(data => {
+					if (data.redirect) {
+						window.location.href = '/game-over'
+					}
+				}).catch(error => console.error("Error: ", error));
+			}
+    	});
+
+		
+		right_gameBox.image.addEventListener('click', function() {
+			//alert('Right Button clicked!');
+			if (checkCorrectness("right")){
+				updateGameBox();
+				updateScore(1);
+			} else {
+				// Game over 
+
+				
+				updateScore(0);
+				fetch('/game', {
+						method: 'POST',
+						headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+						body: new URLSearchParams({ highScore: highScore })})
+				.then(res => res.json())
+				.then(data => {
+					if (data.redirect) {
+						window.location.href = '/game-over'
+					}
+				}).catch(error => console.error("Error: ", error));
+			}
+		});
+
+
+		function checkCorrectness(selection){
+			if (selection === "right" && right_gameBox.population >= left_gameBox.population
+				|| selection === "left" && left_gameBox.population >= right_gameBox.population) {
+				return true;
+			} 
+			return false;
+		}
+
+
+		async function updateGameBox(){
+			left_gameBox.image.src = right_gameBox.image.src;
+			left_gameBox.name.innerHTML = right_gameBox.name.innerHTML;
+			left_gameBox.population = right_gameBox.population;
+
+			const randomCountry = await fetchRandomCountry(); 
+			console.log(randomCountry);
+
+			// actually updating the images
+			right_gameBox.image.src = randomCountry.flag;
+			right_gameBox.name.innerHTML = randomCountry.name;
+			right_gameBox.population = randomCountry.population;
+		}
+		
+
+		function updateScore(update){
+			if (update) {
+				score += 1;
+				highScore = score > highScore ? score : highScore;
+
+				document.getElementById("score").innerHTML = score;
+				document.getElementById("highScore").innerHTML = highScore;
+			} else {
+				score = 0;
+				document.getElementById("score").innerHTML = score;
+			}
+		}
+
+		
+		function updateResultText(updateText, newColor){
+			document.getElementById("choiceResult").innerHTML = updateText;
+			document.getElementById("choiceResult").style.color = newColor;
+		}
+
+
+		async function initGame(){
+			const randomCountryLeft = await fetchRandomCountry();
+			left_gameBox.image.src = randomCountryLeft.flag;
+			left_gameBox.name.innerHTML = randomCountryLeft.name;
+			left_gameBox.population = randomCountryLeft.population;
+
+			const randomCountryRight = await fetchRandomCountry();
+			right_gameBox.image.src = randomCountryRight.flag;
+			right_gameBox.name.innerHTML = randomCountryRight.name;
+			right_gameBox.population = randomCountryRight.population;
+		}
+
+
+		async function fetchRandomCountry() {
+			try {
+				const response = await fetch('https://restcountries.com/v3.1/all')
+				const countries = await response.json();
+				const randomIndex = Math.floor(Math.random() * countries.length);
+				
+				let randomCountry = countries[randomIndex];
+				randomCountry = {name: randomCountry.name.common, 
+								flag: randomCountry.flags.png,
+								population: randomCountry.population};
+				// console.log(`Country: ${randomCountry[name]}, Flag: ${randomCountry[flag]}, Population: ${randomCountry[population]}`);
+				return randomCountry;
+
+			} catch (error) {
+				console.error("Error: ", error);
+			}
+		}
+
+	</script>
+</body>
+</html>

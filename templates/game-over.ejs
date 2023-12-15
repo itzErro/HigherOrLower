@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Higher or Lower</title>
+	<link rel="stylesheet" href="gameStyle.css" type="text/css">
+</head>
+
+<div class="navbar">
+	<%- include('header.ejs') %>
+</div>
+
+<body>
+	<div id="container">
+		<h1>Current High Score: <%- highScore %> </h1> 
+
+		Submit your score to the leaderboard: <br>
+		<form action="/game-over" method="post">
+			Type your name: <input type="text" id="highscore_name" name="name"> <br>
+			<input type="submit" id="submit_your_score" value="Submit Your Score">
+		</form>
+
+		<br>
+		<hr>
+
+		<a href="/game">
+			<div id="play_button">
+				PLAY AGAIN
+			</div>
+		</a>
+	</div>
+
+	<script>
+		// console.log(localStorage.getItem("highScore"));
+		// document.getElementById(highScore).innerHTML = localStorage.getItem("highScore");
+
+	</script>
+</body>
+
+</html>
