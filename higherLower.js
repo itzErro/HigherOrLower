@@ -10,7 +10,7 @@ const bodyParser = require("body-parser");
 
 
 // MONGO SET UP START
-require("dotenv").config({ path: path.resolve(__dirname, '.env') })
+// require("dotenv").config({ path: path.resolve(__dirname, '.env') })
 const MONGO_DB_USERNAME = process.env.MONGO_DB_USERNAME;
 const MONGO_DB_PASSWORD = process.env.MONGO_DB_PASSWORD;
 const MONGO_DB_NAME = process.env.MONGO_DB_NAME;
