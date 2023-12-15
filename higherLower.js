@@ -24,37 +24,37 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 // GLOBALLY SCOPED
 let vars = {};
 let resultsTable = "";
-let deletedCount = 0;
 
 
 // COMMAND LINE CODE START
 if (process.argv.length != 3) {
-    process.stdout.write(`Error Starting\n`);
-    process.exit(0);
-  }
-  const portNumber = process.argv[2].trim();
+  process.stdout.write(`Error Starting\n`);
+  process.exit(0);
+}
 
-  app.listen(portNumber);
-  console.log(`Web server started and running at http://localhost:${portNumber}`);
-  
-  const prompt = "Stop to shutdown the server: ";
-  process.stdout.write(prompt);
-  process.stdin.on("readable", function () {
-    let dataInput = process.stdin.read();
-    if (dataInput !== null) {
-      let command = dataInput.trim();
+const portNumber = process.argv[2]?.trim() || process.env.PORT || 4000;
 
-      if (command === "stop") {
-        console.log("Shutting down the server");
-        process.exit(0);
+app.listen(portNumber);
+console.log(`Web server started and running at http://localhost:${portNumber}`);
 
-      } else {
-        console.error(`Invalid command: ${command}`);
-      }
-      process.stdout.write(prompt);
-      process.stdin.resume();
+const prompt = "Stop to shutdown the server: ";
+process.stdout.write(prompt);
+process.stdin.on("readable", function () {
+  let dataInput = process.stdin.read();
+  if (dataInput !== null) {
+    let command = dataInput.trim();
+
+    if (command === "stop") {
+      console.log("Shutting down the server");
+      process.exit(0);
+
+    } else {
+      console.error(`Invalid command: ${command}`);
     }
-  });
+    process.stdout.write(prompt);
+    process.stdin.resume();
+  }
+});
 
 
 // SET UP CODE
@@ -116,12 +116,6 @@ app.get("/game-over", (req, res) => {
 
 app.post("/game-over", (req, res) => {
   // Create data variable from form submission
-
-
-
-  // console.log(req.body?.name)
-  
-
   vars = {
     name: req.body?.name,
     highScore: highScore
@@ -211,31 +205,4 @@ async function insertScore(vars) {
 app.get("/signIn", (req, res) => {  
   res.render("signIn");
 });
-
-// // Application submission
-// app.post("/signIn", (req, res) => {
-
-//   // Create data variable from form submission
-//   let db_score = 0;
-//   if (playerHighScore){
-//     db_score = db_score;
-//   }
-//   vars = {
-//     name: req.body?.name,
-//     location: req.body?.location,
-//     highScore: db_score
-//   };
-
-//   // Insert into database
-//   insertScore(vars);
-
-//   // As it is inserting into the database move to next page
-//   res.redirect("/signOut");
-// });
-
-
-
-// app.get("/signOut", (req, res) => {  
-//   res.render("signOut", vars);
-// });
 
