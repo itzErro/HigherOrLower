@@ -80,7 +80,7 @@ app.get("/game", (req, res) => {
   const serverData = { 
     score: score, 
     playerLoggedIn: playerLoggedIn, 
-    playerHighScore: highScore, 
+    playerHighScore: 0, 
     playerName: playerName, 
     playerLocation: playerLocation 
   };
