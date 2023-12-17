@@ -80,7 +80,7 @@ app.get("/game", (req, res) => {
   const serverData = { 
     score: score, 
     playerLoggedIn: playerLoggedIn, 
-    playerHighScore: 0, 
+    playerHighScore: highScore, 
     playerName: playerName, 
     playerLocation: playerLocation 
   };
@@ -197,4 +197,3 @@ async function insertScore(vars) {
 app.get("/signIn", (req, res) => {  
   res.render("signIn");
 });
-
