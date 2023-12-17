@@ -25,10 +25,9 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 let vars = {};
 let resultsTable = "";
 
-const portNumber = process.env.PORT;
+const portNumber = process.env.PORT || 4000;
 
 app.listen(portNumber);
-console.log(`Web server started and running at http://localhost:${portNumber}`);
 
 const prompt = "Stop to shutdown the server: ";
 process.stdout.write(prompt);
